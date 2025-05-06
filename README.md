@@ -178,3 +178,49 @@ $ npm run migration:revert
 <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo.svg" width="150" alt="Nest Logo" /></a>
 
 [![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/dashboard?id=monstar-lab-oss_nestjs-starter-rest-api)
+
+你已经设置好了大部分 `.env` 配置，但缺少的关键点是：
+
+```
+JWT_PUBLIC_KEY_BASE64=
+JWT_PRIVATE_KEY_BASE64=
+```
+
+这两个值是 **Base64 编码的 RSA 公私钥**，通常用于 **JWT（JSON Web Token）签名和验证**。
+
+---
+
+### ✅ 步骤：生成并配置 JWT 公私钥对
+
+#### 第 1 步：生成 RSA 密钥对
+
+使用以下命令在本地生成一对 2048 位的 RSA 密钥（你也可以使用其他工具）：
+
+```bash
+# 生成私钥
+openssl genpkey -algorithm RSA -out private.pem -pkeyopt rsa_keygen_bits:2048
+
+# 从私钥生成公钥
+openssl rsa -pubout -in private.pem -out public.pem
+```
+
+#### 第 2 步：Base64 编码
+
+然后将生成的 `private.pem` 和 `public.pem` 文件内容进行 Base64 编码：
+
+```bash
+# 编码私钥
+base64 -i private.pem
+
+# 编码公钥
+base64 -i public.pem
+```
+
+复制输出的内容，并粘贴到 `.env` 文件中的对应位置：
+
+```env
+JWT_PRIVATE_KEY_BASE64=（将 base64 编码后的 private.pem 内容粘贴在这里）
+JWT_PUBLIC_KEY_BASE64=（将 base64 编码后的 public.pem 内容粘贴在这里）
+```
+
+> ⚠️ 注意：Base64 编码后的内容可能很长，确保它是一整行（如果换行可能会出错）。

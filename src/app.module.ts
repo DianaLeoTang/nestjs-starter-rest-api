@@ -1,3 +1,10 @@
+/*
+ * @Author: Diana Tang
+ * @Date: 2025-05-06 18:24:06
+ * @LastEditors: Diana Tang
+ * @Description: some description
+ * @FilePath: /nestjs-starter-rest-api/src/app.module.ts
+ */
 import { Module } from '@nestjs/common';
 
 import { AppController } from './app.controller';
