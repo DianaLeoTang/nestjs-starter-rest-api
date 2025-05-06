@@ -27,17 +27,22 @@ services:
       DEFAULT_ADMIN_USER_PASSWORD: ${DEFAULT_ADMIN_USER_PASSWORD}
     depends_on:
       - pgsqldb
+    networks:
+      - app-network
 
   pgsqldb:
+    container_name: pgsqldb
     image: postgres:16.3
     environment:
-      POSTGRES_USER: "${DB_USER}"
-      POSTGRES_PASSWORD: "${DB_PASS}"
-      POSTGRES_DB: "${DB_NAME}"
+      POSTGRES_USER: '${DB_USER}'
+      POSTGRES_PASSWORD: '${DB_PASS}'
+      POSTGRES_DB: '${DB_NAME}'
     ports:
       - 5432:5432
     volumes:
       - pgsqldata:/var/lib/postgresql/data
+    networks:
+      - app-network
 
   adminer:
     image: adminer
@@ -45,7 +50,13 @@ services:
       - 8080:8080
     depends_on:
       - pgsqldb
+    networks:
+      - app-network # 添加这一行
 
 volumes:
   node_modules:
   pgsqldata:
+
+networks:
+  app-network:
+    driver: bridge
