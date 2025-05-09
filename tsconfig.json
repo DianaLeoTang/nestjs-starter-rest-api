@@ -26,6 +26,12 @@
     "allowSyntheticDefaultImports": true,
     "incremental": true
   },
+  "builder": {
+      "type": "swc",
+      "options": {
+        "swcrcPath": "infrastructure/.swcrc",
+      }
+    },
   "exclude": [
     "node_modules",
     "dist"
