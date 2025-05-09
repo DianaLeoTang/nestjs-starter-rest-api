@@ -1,3 +1,10 @@
+/*
+ * @Author: Diana Tang
+ * @Date: 2025-05-06 18:24:06
+ * @LastEditors: Diana Tang
+ * @Description: some description
+ * @FilePath: /nestjs-starter-rest-api/src/main.ts
+ */
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
@@ -8,7 +15,10 @@ import { VALIDATION_PIPE_OPTIONS } from './shared/constants';
 import { RequestIdMiddleware } from './shared/middlewares/request-id/request-id.middleware';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    // 这里设置日志打印的等级和类型
+    logger: ['error', 'warn', 'log', 'verbose', 'debug'],
+  });
   app.setGlobalPrefix('api/v1');
 
   app.useGlobalPipes(new ValidationPipe(VALIDATION_PIPE_OPTIONS));
