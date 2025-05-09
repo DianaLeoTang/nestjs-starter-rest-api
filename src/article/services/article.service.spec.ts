@@ -43,7 +43,13 @@ describe('ArticleService', () => {
             getUserById: jest.fn(),
           },
         },
-        { provide: ArticleAclService, useValue: new ArticleAclService() },
+        {
+          provide: ArticleAclService,
+          useValue: {
+            forActor: jest.fn().mockReturnThis(),
+            canDoAction: jest.fn().mockReturnValue(true),
+          },
+        },
         { provide: AppLogger, useValue: mockedLogger },
       ],
     }).compile();
@@ -322,7 +328,7 @@ describe('ArticleService', () => {
         await service.deleteArticle(ctx, articleId);
       } catch (error: any) {
         expect(error.constructor).toEqual(UnauthorizedException);
-        expect(mockedRepository.save).not.toHaveBeenCalled();
+        expect(mockedRepository.remove).not.toHaveBeenCalled();
       }
     });
   });

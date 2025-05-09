@@ -1,6 +1,7 @@
 import { Injectable, Scope } from '@nestjs/common';
 import { createLogger, Logger, transports } from 'winston';
 
+// 单独的日志服务功能
 import { RequestContext } from '../request-context/request-context.dto';
 
 @Injectable({ scope: Scope.TRANSIENT })

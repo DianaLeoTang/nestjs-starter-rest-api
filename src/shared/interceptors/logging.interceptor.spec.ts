@@ -1,8 +1,19 @@
+/*
+ * @Author: Diana Tang
+ * @Date: 2025-05-06 18:24:06
+ * @LastEditors: Diana Tang
+ * @Description: some description
+ * @FilePath: /nestjs-starter-rest-api/src/shared/interceptors/logging.interceptor.spec.ts
+ */
 import { ExecutionContext } from '@nestjs/common';
 
 import { AppLogger } from '../logger/logger.service';
 import * as utils from '../request-context/util';
 import { LoggingInterceptor } from './logging.interceptor';
+
+jest.mock('../request-context/util', () => ({
+  createRequestContext: jest.fn(),
+}));
 
 describe('LoggingInterceptor', () => {
   let loggingInterceptor: LoggingInterceptor;
@@ -13,10 +24,10 @@ describe('LoggingInterceptor', () => {
     header: jest.fn(),
   };
 
-  const mockExecutionContext = ({
+  const mockExecutionContext = {
     switchToHttp: jest.fn().mockReturnThis(),
     getRequest: jest.fn().mockReturnThis(),
-  } as unknown) as ExecutionContext;
+  } as unknown as ExecutionContext;
 
   const mockCallHandler = {
     handle: jest.fn(),
@@ -25,6 +36,7 @@ describe('LoggingInterceptor', () => {
 
   beforeEach(async () => {
     loggingInterceptor = new LoggingInterceptor(new AppLogger());
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -33,20 +45,17 @@ describe('LoggingInterceptor', () => {
 
   describe('intercept', () => {
     it('intercept', async () => {
-      (mockExecutionContext.switchToHttp().getRequest as jest.Mock<
-        any,
-        any
-      >).mockReturnValueOnce(mockRequest);
+      (
+        mockExecutionContext.switchToHttp().getRequest as jest.Mock<any, any>
+      ).mockReturnValueOnce(mockRequest);
       mockCallHandler.handle.mockReturnValueOnce({
         pipe: jest.fn(),
       });
 
-      const createRequestContext = jest.spyOn(utils, 'createRequestContext');
-
       loggingInterceptor.intercept(mockExecutionContext, mockCallHandler);
 
       expect(mockExecutionContext.switchToHttp().getRequest).toHaveBeenCalled();
-      expect(createRequestContext).toHaveBeenCalledWith(mockRequest);
+      expect(utils.createRequestContext).toHaveBeenCalledWith(mockRequest);
     });
   });
 });

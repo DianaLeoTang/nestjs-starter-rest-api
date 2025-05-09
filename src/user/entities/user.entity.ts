@@ -1,3 +1,10 @@
+/*
+ * @Author: Diana Tang
+ * @Date: 2025-05-06 18:24:06
+ * @LastEditors: Diana Tang
+ * @Description: some description
+ * @FilePath: /nestjs-starter-rest-api/src/user/entities/user.entity.ts
+ */
 import {
   Column,
   CreateDateColumn,
@@ -41,6 +48,6 @@ export class User {
   @UpdateDateColumn({ name: 'updatedAt', nullable: true })
   updatedAt: Date;
 
-  @OneToMany(() => Article, (article) => article.author)
-  articles: Article[];
+  @OneToMany('Article', 'author')
+  articles: Promise<Article[]>;
 }
