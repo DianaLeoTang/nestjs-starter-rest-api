@@ -69,11 +69,11 @@ services:
     # 其他配置...
     networks:
       - app-network
-      
+
   adminer:
     # 其他配置...
     networks:
-      - app-network  # 添加这一行，关键修复
+      - app-network # 添加这一行，关键修复
 
 networks:
   app-network:
@@ -124,3 +124,77 @@ docker compose up -d
 本次故障排除体现了 Docker 容器化环境中常见的网络配置问题。通过系统分析错误信息，检查配置文件，并逐步排除可能的原因，最终确定了问题所在。关键修复是确保所有服务都连接到同一个 Docker 网络。这种方法解决了应用程序和数据库管理工具连接数据库的问题，同时保持了配置的可移植性和环境的一致性。
 
 这种解决方案不依赖于固定 IP 地址，因此适用于生产环境，可以随着容器的重启和重建而保持稳定性。
+我看到您尝试直接 ping `pgsqldb` 主机名，但无法解析。这是因为 `pgsqldb` 是 Docker 网络中的容器名称，只有在 Docker 容器运行起来后才能访问。
+
+让我们按步骤解决这个问题：
+
+1. **首先，确保 Docker 服务正在运行**
+
+   - 打开 Docker Desktop
+   - 等待 Docker 引擎完全启动
+
+2. **创建并启动容器**
+   在项目根目录下运行：
+
+   ```bash
+   docker-compose up -d
+   ```
+
+   这个命令会：
+
+   - 构建所有服务的镜像
+   - 创建并启动所有容器
+   - `-d` 参数表示在后台运行
+
+3. **验证容器是否正在运行**
+
+   ```bash
+   docker-compose ps
+   ```
+
+   您应该能看到三个容器都在运行：
+
+   - app
+   - pgsqldb
+   - adminer
+
+4. **检查容器网络**
+
+   ```bash
+   docker network ls
+   docker network inspect nestjs-starter-rest-api_default
+   ```
+
+5. **测试数据库连接**
+   您可以通过以下方式测试数据库连接：
+
+   - 访问 http://localhost:8080 使用 Adminer 界面
+   - 使用以下连接信息：
+     - 系统：PostgreSQL
+     - 服务器：pgsqldb
+     - 用户名：${DB_USER}
+     - 密码：${DB_PASS}
+     - 数据库：${DB_NAME}
+
+6. **检查环境变量**
+   确保您已经创建了 `.env` 文件，包含所有必要的环境变量：
+
+   ```
+   DB_USER=your_username
+   DB_PASS=your_password
+   DB_NAME=your_database
+   DB_PORT=5432
+   ```
+
+7. **查看容器日志**
+   如果遇到问题，可以查看容器日志：
+
+   ```bash
+   docker-compose logs -f
+   ```
+
+8. **进入容器内部测试**
+   如果需要，可以进入容器内部测试：
+   ```bash
+   docker-compose exec pgsqldb psql -U ${DB_USER} -d ${DB_NAME}
+   ```
