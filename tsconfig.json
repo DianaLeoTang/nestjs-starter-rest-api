@@ -2,10 +2,11 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "CommonJS",
-    "lib": [
-      "ES2022"
-    ],
+    "lib": ["ES2022"],
     "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    },
     "outDir": "./dist",
     "strict": true,
     "strictPropertyInitialization": false,
@@ -27,13 +28,10 @@
     "incremental": true
   },
   "builder": {
-      "type": "swc",
-      "options": {
-        "swcrcPath": "infrastructure/.swcrc",
-      }
-    },
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+    "type": "swc",
+    "options": {
+      "swcrcPath": "infrastructure/.swcrc"
+    }
+  },
+  "exclude": ["node_modules", "dist"]
 }

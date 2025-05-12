@@ -1,0 +1,354 @@
+{
+  "numFailedTestSuites": 0,
+  "numFailedTests": 0,
+  "numPassedTestSuites": 2,
+  "numPassedTests": 14,
+  "numPendingTestSuites": 0,
+  "numPendingTests": 0,
+  "numRuntimeErrorTestSuites": 0,
+  "numTodoTests": 0,
+  "numTotalTestSuites": 2,
+  "numTotalTests": 14,
+  "openHandles": [],
+  "snapshot": {
+    "added": 0,
+    "didUpdate": false,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0
+  },
+  "startTime": 1747028006650,
+  "success": true,
+  "testResults": [
+    {
+      "leaks": false,
+      "numFailingTests": 0,
+      "numPassingTests": 4,
+      "numPendingTests": 0,
+      "numTodoTests": 0,
+      "openHandles": [],
+      "perfStats": {
+        "end": 1747028007374,
+        "runtime": 645,
+        "slow": false,
+        "start": 1747028006729
+      },
+      "skipped": false,
+      "snapshot": {
+        "added": 0,
+        "fileDeleted": false,
+        "matched": 0,
+        "unchecked": 0,
+        "uncheckedKeys": [],
+        "unmatched": 0,
+        "updated": 0
+      },
+      "testFilePath": "/Users/callustang/tangCode/nestjs-starter-rest-api/src/auth/controllers/auth.controller.spec.ts",
+      "testResults": [
+        {
+          "ancestorTitles": [
+            "AuthController"
+          ],
+          "duration": 8,
+          "failureDetails": [],
+          "failureMessages": [],
+          "fullName": "AuthController should be defined",
+          "invocations": 1,
+          "location": {
+            "column": 3,
+            "line": 36
+          },
+          "numPassingAsserts": 1,
+          "retryReasons": [],
+          "status": "passed",
+          "title": "should be defined"
+        },
+        {
+          "ancestorTitles": [
+            "AuthController",
+            "registerLocal"
+          ],
+          "duration": 2,
+          "failureDetails": [],
+          "failureMessages": [],
+          "fullName": "AuthController registerLocal should register new user",
+          "invocations": 1,
+          "location": {
+            "column": 5,
+            "line": 43
+          },
+          "numPassingAsserts": 1,
+          "retryReasons": [],
+          "status": "passed",
+          "title": "should register new user"
+        },
+        {
+          "ancestorTitles": [
+            "AuthController",
+            "login"
+          ],
+          "duration": 2,
+          "failureDetails": [],
+          "failureMessages": [],
+          "fullName": "AuthController login should login user",
+          "invocations": 1,
+          "location": {
+            "column": 5,
+            "line": 63
+          },
+          "numPassingAsserts": 1,
+          "retryReasons": [],
+          "status": "passed",
+          "title": "should login user"
+        },
+        {
+          "ancestorTitles": [
+            "AuthController",
+            "refreshToken"
+          ],
+          "duration": 1,
+          "failureDetails": [],
+          "failureMessages": [],
+          "fullName": "AuthController refreshToken should generate refresh token",
+          "invocations": 1,
+          "location": {
+            "column": 5,
+            "line": 95
+          },
+          "numPassingAsserts": 2,
+          "retryReasons": [],
+          "status": "passed",
+          "title": "should generate refresh token"
+        }
+      ],
+      "failureMessage": null
+    },
+    {
+      "leaks": false,
+      "numFailingTests": 0,
+      "numPassingTests": 10,
+      "numPendingTests": 0,
+      "numTodoTests": 0,
+      "openHandles": [],
+      "perfStats": {
+        "end": 1747028007512,
+        "runtime": 133,
+        "slow": false,
+        "start": 1747028007379
+      },
+      "skipped": false,
+      "snapshot": {
+        "added": 0,
+        "fileDeleted": false,
+        "matched": 0,
+        "unchecked": 0,
+        "uncheckedKeys": [],
+        "unmatched": 0,
+        "updated": 0
+      },
+      "testFilePath": "/Users/callustang/tangCode/nestjs-starter-rest-api/src/auth/services/auth.service.spec.ts",
+      "testResults": [
+        {
+          "ancestorTitles": [
+            "AuthService"
+          ],
+          "duration": 2,
+          "failureDetails": [],
+          "failureMessages": [],
+          "fullName": "AuthService should be defined",
+          "invocations": 1,
+          "location": {
+            "column": 3,
+            "line": 79
+          },
+          "numPassingAsserts": 1,
+          "retryReasons": [],
+          "status": "passed",
+          "title": "should be defined"
+        },
+        {
+          "ancestorTitles": [
+            "AuthService",
+            "validateUser"
+          ],
+          "duration": 1,
+          "failureDetails": [],
+          "failureMessages": [],
+          "fullName": "AuthService validateUser should success when username/password valid",
+          "invocations": 1,
+          "location": {
+            "column": 5,
+            "line": 86
+          },
+          "numPassingAsserts": 2,
+          "retryReasons": [],
+          "status": "passed",
+          "title": "should success when username/password valid"
+        },
+        {
+          "ancestorTitles": [
+            "AuthService",
+            "validateUser"
+          ],
+          "duration": 3,
+          "failureDetails": [],
+          "failureMessages": [],
+          "fullName": "AuthService validateUser should fail when username/password invalid",
+          "invocations": 1,
+          "location": {
+            "column": 5,
+            "line": 101
+          },
+          "numPassingAsserts": 1,
+          "retryReasons": [],
+          "status": "passed",
+          "title": "should fail when username/password invalid"
+        },
+        {
+          "ancestorTitles": [
+            "AuthService",
+            "validateUser"
+          ],
+          "duration": 1,
+          "failureDetails": [],
+          "failureMessages": [],
+          "fullName": "AuthService validateUser should fail when user account is disabled",
+          "invocations": 1,
+          "location": {
+            "column": 5,
+            "line": 113
+          },
+          "numPassingAsserts": 1,
+          "retryReasons": [],
+          "status": "passed",
+          "title": "should fail when user account is disabled"
+        },
+        {
+          "ancestorTitles": [
+            "AuthService",
+            "login"
+          ],
+          "duration": 2,
+          "failureDetails": [],
+          "failureMessages": [],
+          "fullName": "AuthService login should return auth token for valid user",
+          "invocations": 1,
+          "location": {
+            "column": 5,
+            "line": 125
+          },
+          "numPassingAsserts": 2,
+          "retryReasons": [],
+          "status": "passed",
+          "title": "should return auth token for valid user"
+        },
+        {
+          "ancestorTitles": [
+            "AuthService",
+            "register"
+          ],
+          "duration": 2,
+          "failureDetails": [],
+          "failureMessages": [],
+          "fullName": "AuthService register should register new user",
+          "invocations": 1,
+          "location": {
+            "column": 5,
+            "line": 136
+          },
+          "numPassingAsserts": 2,
+          "retryReasons": [],
+          "status": "passed",
+          "title": "should register new user"
+        },
+        {
+          "ancestorTitles": [
+            "AuthService",
+            "refreshToken"
+          ],
+          "duration": 1,
+          "failureDetails": [],
+          "failureMessages": [],
+          "fullName": "AuthService refreshToken should generate auth token",
+          "invocations": 1,
+          "location": {
+            "column": 5,
+            "line": 151
+          },
+          "numPassingAsserts": 2,
+          "retryReasons": [],
+          "status": "passed",
+          "title": "should generate auth token"
+        },
+        {
+          "ancestorTitles": [
+            "AuthService",
+            "refreshToken"
+          ],
+          "duration": 1,
+          "failureDetails": [],
+          "failureMessages": [],
+          "fullName": "AuthService refreshToken should throw exception when user is not valid",
+          "invocations": 1,
+          "location": {
+            "column": 5,
+            "line": 164
+          },
+          "numPassingAsserts": 1,
+          "retryReasons": [],
+          "status": "passed",
+          "title": "should throw exception when user is not valid"
+        },
+        {
+          "ancestorTitles": [
+            "AuthService",
+            "getAuthToken"
+          ],
+          "duration": 2,
+          "failureDetails": [],
+          "failureMessages": [],
+          "fullName": "AuthService getAuthToken should generate access token with payload",
+          "invocations": 1,
+          "location": {
+            "column": 5,
+            "line": 210
+          },
+          "numPassingAsserts": 2,
+          "retryReasons": [],
+          "status": "passed",
+          "title": "should generate access token with payload"
+        },
+        {
+          "ancestorTitles": [
+            "AuthService",
+            "getAuthToken"
+          ],
+          "duration": 1,
+          "failureDetails": [],
+          "failureMessages": [],
+          "fullName": "AuthService getAuthToken should generate refresh token with subject",
+          "invocations": 1,
+          "location": {
+            "column": 5,
+            "line": 223
+          },
+          "numPassingAsserts": 2,
+          "retryReasons": [],
+          "status": "passed",
+          "title": "should generate refresh token with subject"
+        }
+      ],
+      "failureMessage": null
+    }
+  ],
+  "wasInterrupted": false
+}
