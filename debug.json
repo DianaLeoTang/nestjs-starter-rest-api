@@ -26,7 +26,7 @@
     "unmatched": 0,
     "updated": 0
   },
-  "startTime": 1747028006650,
+  "startTime": 1747029482098,
   "success": true,
   "testResults": [
     {
@@ -37,10 +37,10 @@
       "numTodoTests": 0,
       "openHandles": [],
       "perfStats": {
-        "end": 1747028007374,
-        "runtime": 645,
+        "end": 1747029482907,
+        "runtime": 726,
         "slow": false,
-        "start": 1747028006729
+        "start": 1747029482181
       },
       "skipped": false,
       "snapshot": {
@@ -58,7 +58,7 @@
           "ancestorTitles": [
             "AuthController"
           ],
-          "duration": 8,
+          "duration": 9,
           "failureDetails": [],
           "failureMessages": [],
           "fullName": "AuthController should be defined",
@@ -96,7 +96,7 @@
             "AuthController",
             "login"
           ],
-          "duration": 2,
+          "duration": 1,
           "failureDetails": [],
           "failureMessages": [],
           "fullName": "AuthController login should login user",
@@ -115,7 +115,7 @@
             "AuthController",
             "refreshToken"
           ],
-          "duration": 1,
+          "duration": 2,
           "failureDetails": [],
           "failureMessages": [],
           "fullName": "AuthController refreshToken should generate refresh token",
@@ -140,10 +140,10 @@
       "numTodoTests": 0,
       "openHandles": [],
       "perfStats": {
-        "end": 1747028007512,
-        "runtime": 133,
+        "end": 1747029483052,
+        "runtime": 141,
         "slow": false,
-        "start": 1747028007379
+        "start": 1747029482911
       },
       "skipped": false,
       "snapshot": {
@@ -161,7 +161,7 @@
           "ancestorTitles": [
             "AuthService"
           ],
-          "duration": 2,
+          "duration": 3,
           "failureDetails": [],
           "failureMessages": [],
           "fullName": "AuthService should be defined",
@@ -180,7 +180,7 @@
             "AuthService",
             "validateUser"
           ],
-          "duration": 1,
+          "duration": 2,
           "failureDetails": [],
           "failureMessages": [],
           "fullName": "AuthService validateUser should success when username/password valid",
@@ -313,7 +313,7 @@
             "AuthService",
             "getAuthToken"
           ],
-          "duration": 2,
+          "duration": 1,
           "failureDetails": [],
           "failureMessages": [],
           "fullName": "AuthService getAuthToken should generate access token with payload",
