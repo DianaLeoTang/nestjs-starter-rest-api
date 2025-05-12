@@ -26,7 +26,7 @@
     "unmatched": 0,
     "updated": 0
   },
-  "startTime": 1747029482098,
+  "startTime": 1747030869691,
   "success": true,
   "testResults": [
     {
@@ -37,10 +37,10 @@
       "numTodoTests": 0,
       "openHandles": [],
       "perfStats": {
-        "end": 1747029482907,
-        "runtime": 726,
+        "end": 1747030870427,
+        "runtime": 662,
         "slow": false,
-        "start": 1747029482181
+        "start": 1747030869765
       },
       "skipped": false,
       "snapshot": {
@@ -77,7 +77,7 @@
             "AuthController",
             "registerLocal"
           ],
-          "duration": 2,
+          "duration": 3,
           "failureDetails": [],
           "failureMessages": [],
           "fullName": "AuthController registerLocal should register new user",
@@ -96,7 +96,7 @@
             "AuthController",
             "login"
           ],
-          "duration": 1,
+          "duration": 2,
           "failureDetails": [],
           "failureMessages": [],
           "fullName": "AuthController login should login user",
@@ -140,10 +140,10 @@
       "numTodoTests": 0,
       "openHandles": [],
       "perfStats": {
-        "end": 1747029483052,
-        "runtime": 141,
+        "end": 1747030870566,
+        "runtime": 134,
         "slow": false,
-        "start": 1747029482911
+        "start": 1747030870432
       },
       "skipped": false,
       "snapshot": {
@@ -180,7 +180,7 @@
             "AuthService",
             "validateUser"
           ],
-          "duration": 2,
+          "duration": 1,
           "failureDetails": [],
           "failureMessages": [],
           "fullName": "AuthService validateUser should success when username/password valid",
@@ -199,7 +199,7 @@
             "AuthService",
             "validateUser"
           ],
-          "duration": 3,
+          "duration": 2,
           "failureDetails": [],
           "failureMessages": [],
           "fullName": "AuthService validateUser should fail when username/password invalid",
@@ -237,7 +237,7 @@
             "AuthService",
             "login"
           ],
-          "duration": 2,
+          "duration": 1,
           "failureDetails": [],
           "failureMessages": [],
           "fullName": "AuthService login should return auth token for valid user",
@@ -294,7 +294,7 @@
             "AuthService",
             "refreshToken"
           ],
-          "duration": 1,
+          "duration": 0,
           "failureDetails": [],
           "failureMessages": [],
           "fullName": "AuthService refreshToken should throw exception when user is not valid",
@@ -313,7 +313,7 @@
             "AuthService",
             "getAuthToken"
           ],
-          "duration": 1,
+          "duration": 2,
           "failureDetails": [],
           "failureMessages": [],
           "fullName": "AuthService getAuthToken should generate access token with payload",

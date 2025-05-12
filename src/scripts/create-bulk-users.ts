@@ -1,37 +1,17 @@
 import * as bcrypt from 'bcrypt';
 import { config } from 'dotenv';
+import * as fs from 'fs';
+import * as path from 'path';
 import { DataSource } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import * as winston from 'winston';
 
-// 加载.env文件中的环境变量
+// 加载环境变量
 config();
-
-// 定义接口
-interface TableInfo {
-  table_name: string;
-}
-
-interface ColumnInfo {
-  column_name: string;
-}
-
-interface User {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  roles: string[];
-  [key: string]: any;
-}
 
 // 创建日志记录器
 const logger = winston.createLogger({
-  level: 'info',
+  level: 'debug',
   format: winston.format.combine(
     winston.format.timestamp(),
     winston.format.colorize(),
@@ -42,8 +22,54 @@ const logger = winston.createLogger({
   transports: [new winston.transports.Console()],
 });
 
-async function listTablesAndCreateUsers() {
-  // 使用环境变量创建新的数据库连接
+// 用户凭证接口
+interface UserCredential {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+}
+
+// 存储生成的用户凭证
+const usersCredentials: UserCredential[] = [];
+
+// 生成可预测的密码
+const generatePassword = (index: number) => {
+  return `Pass123${index}`;
+};
+
+// 哈希密码
+const hashPassword = async (password: string): Promise<string> => {
+  const salt = await bcrypt.genSalt(10);
+  return bcrypt.hash(password, salt);
+};
+
+// 将用户凭证保存到CSV文件
+async function saveUserCredentialsToFile(
+  users: UserCredential[],
+): Promise<void> {
+  try {
+    const headers = 'Email,Password,FirstName,LastName\n';
+    const rows = users
+      .map(
+        (user) =>
+          `${user.email},${user.password},${user.firstName},${user.lastName}`,
+      )
+      .join('\n');
+    const csvContent = headers + rows;
+
+    const filePath = path.join(process.cwd(), 'user_credentials.csv');
+    fs.writeFileSync(filePath, csvContent);
+
+    logger.info(`✅ 用户凭证已保存到: ${filePath}`);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : '未知错误';
+    logger.error(`❌ 保存用户凭证失败: ${errorMessage}`);
+  }
+}
+
+async function createBulkUsers() {
+  // 建立数据库连接
   const dataSource = new DataSource({
     type: 'postgres',
     host: process.env.DB_HOST || 'localhost',
@@ -51,233 +77,139 @@ async function listTablesAndCreateUsers() {
     username: process.env.DB_USER || 'root',
     password: process.env.DB_PASS || 'example',
     database: process.env.DB_NAME || 'example_db',
-    ssl: false,
-    entities: [__dirname + '/../**/*.entity{.ts,.js}'],
     synchronize: false,
   });
 
   try {
-    // 初始化连接
     await dataSource.initialize();
-    logger.info('✅ 数据库连接建立成功!');
+    logger.info('✅ 数据库连接成功!');
 
-    // 列出所有表
-    const tables = (await dataSource.query(`
-      SELECT table_name 
-      FROM information_schema.tables 
-      WHERE table_schema = 'public'
-    `)) as TableInfo[];
+    // 确保用户表存在
+    await dataSource.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id UUID PRIMARY KEY,
+        firstName VARCHAR(100),
+        lastName VARCHAR(100),
+        email VARCHAR(100) UNIQUE,
+        password VARCHAR(255),
+        isActive BOOLEAN DEFAULT true,
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        roles TEXT[]
+      );
+    `);
 
-    logger.info('可用的表:');
-    tables.forEach((table: TableInfo, index: number) => {
-      logger.info(`${index + 1}. ${table.table_name}`);
+    logger.info('✅ 确保users表存在');
+
+    // 获取有关列的信息
+    const columnInfo = await dataSource.query(`
+      SELECT column_name, data_type, udt_name
+      FROM information_schema.columns 
+      WHERE table_name = 'users';
+    `);
+
+    logger.debug('列信息:');
+    columnInfo.forEach((col: any) => {
+      logger.debug(`${col.column_name}: ${col.data_type} (${col.udt_name})`);
     });
 
-    if (tables.length === 0) {
-      logger.error('❌ 数据库中没有表。请先创建表。');
-      return false;
+    // 查看id列的类型
+    const idColumn = columnInfo.find((col: any) => col.column_name === 'id');
+    if (idColumn) {
+      logger.info(`ID列类型: ${idColumn.data_type} (${idColumn.udt_name})`);
     }
 
-    // 通过用户输入或自动检测选择用户表
-    let userTableName = null;
+    // 创建用户数量
+    const userCount = 50; // 先创建少量用户进行测试
+    let successCount = 0;
 
-    // 自动检测可能的用户表
-    const possibleUserTables = tables.filter((table: TableInfo) =>
-      table.table_name.toLowerCase().includes('user'),
-    );
+    // 批量创建用户
+    for (let i = 1; i <= userCount; i++) {
+      const firstName = `User${i}`;
+      const lastName = `Test${i}`;
+      const email = `user${i}@example.com`;
+      const password = generatePassword(i);
+      const hashedPassword = await hashPassword(password);
 
-    if (possibleUserTables.length > 0) {
-      userTableName = possibleUserTables[0].table_name;
-      logger.info(`使用可能的用户表: ${userTableName}`);
-    } else {
-      // 如果未找到用户表，尝试创建一个基本的用户表
-      logger.info('未找到用户表，将尝试创建一个基本的用户表');
+      // 保存用户信息到CSV
+      usersCredentials.push({
+        email,
+        password,
+        firstName,
+        lastName,
+      });
 
       try {
-        // 检查是否需要创建users表
-        await dataSource.query(`
-          CREATE TABLE IF NOT EXISTS users (
-            id UUID PRIMARY KEY,
-            firstName VARCHAR(100),
-            lastName VARCHAR(100),
-            email VARCHAR(100) UNIQUE,
-            password VARCHAR(255),
-            isActive BOOLEAN DEFAULT true,
-            createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            roles TEXT[]
-          );
-        `);
+        // 明确生成一个UUID字符串
+        const idValue = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
 
-        userTableName = 'users';
-        logger.info('✅ 已创建users表');
+        logger.debug(`为用户 ${email} 生成的UUID: ${idValue}`);
+
+        // 使用参数化查询
+        const result = await dataSource.query(
+          `INSERT INTO users (id, firstName, lastName, email, password, isActive, roles) 
+           VALUES ($1, $2, $3, $4, $5, $6, $7::text[])
+           ON CONFLICT (email) DO NOTHING
+           RETURNING id`,
+          [
+            idValue, // 使用明确的UUID字符串
+            firstName,
+            lastName,
+            email,
+            hashedPassword,
+            true,
+            '{user}', // PostgreSQL 数组语法
+          ],
+        );
+
+        if (result && result.length > 0) {
+          logger.info(`✅ 用户创建成功: ${email}, ID: ${result[0].id}`);
+          successCount++;
+        } else {
+          logger.warn(`⚠️ 用户可能已存在: ${email}`);
+        }
       } catch (error: unknown) {
         const errorMessage =
           error instanceof Error ? error.message : '未知错误';
-        logger.error(`❌ 创建用户表失败: ${errorMessage}`);
-        return false;
+        logger.error(`❌ 创建用户失败 ${email}: ${errorMessage}`);
+
+        // 打印详细的错误信息
+        if (error instanceof Error && error.stack) {
+          logger.debug(`错误堆栈: ${error.stack}`);
+        }
       }
     }
 
-    // 现在我们有了用户表，可以创建用户了
-    await createBulkUsers(dataSource, userTableName, 50);
+    logger.info(`✅ 完成! 成功创建 ${successCount}/${userCount} 个用户`);
 
-    // 关闭连接
+    // 保存用户凭证到CSV
+    if (usersCredentials.length > 0) {
+      await saveUserCredentialsToFile(usersCredentials);
+    }
+
+    // 关闭数据库连接
     await dataSource.destroy();
-    logger.info('✅ 操作成功完成!');
-
     return true;
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : '未知错误';
-    logger.error('❌ 操作失败，错误:');
-    logger.error(errorMessage);
+    logger.error(`❌ 操作失败: ${errorMessage}`);
+
+    if (error instanceof Error && error.stack) {
+      logger.debug(`错误堆栈: ${error.stack}`);
+    }
+
+    // 确保关闭数据库连接
+    if (dataSource.isInitialized) {
+      await dataSource.destroy();
+    }
     return false;
   }
 }
 
-// 生成随机密码的函数
-const generateRandomPassword = (length = 10) => {
-  const chars =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-  let password = '';
-  for (let i = 0; i < length; i++) {
-    password += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return password;
-};
-
-// 哈希密码的函数
-const hashPassword = async (password: string): Promise<string> => {
-  const salt = await bcrypt.genSalt(10);
-  return bcrypt.hash(password, salt);
-};
-
-// 创建随机用户的函数
-const createRandomUser = async (index: number): Promise<User> => {
-  const firstName = `User${index}`;
-  const lastName = `Test${index}`;
-  const email = `user${index}@example.com`;
-  const password = generateRandomPassword();
-  const hashedPassword = await hashPassword(password);
-
-  // 记录创建的用户信息用于测试
-  logger.info(`Created user: ${email} with password: ${password}`);
-
-  return {
-    id: uuidv4(),
-    firstName,
-    lastName,
-    email,
-    password: hashedPassword,
-    isActive: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    roles: ['user'],
-  };
-};
-
-async function createBulkUsers(
-  dataSource: DataSource,
-  userTableName: string,
-  userCount = 50,
-) {
-  logger.info(`开始创建 ${userCount} 个用户到表 ${userTableName}...`);
-
-  // 批量创建用户以避免内存问题
-  const batchSize = 10;
-  const batches = Math.ceil(userCount / batchSize);
-
-  for (let batch = 0; batch < batches; batch++) {
-    const start = batch * batchSize;
-    const end = Math.min(start + batchSize, userCount);
-    logger.info(`处理批次 ${batch + 1}/${batches} (用户 ${start + 1}-${end})`);
-
-    // 创建一批用户
-    const usersToCreate: User[] = [];
-    for (let i = start; i < end; i++) {
-      usersToCreate.push(await createRandomUser(i + 1));
-    }
-
-    // 将用户插入数据库
-    const queryRunner = dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      for (const user of usersToCreate) {
-        // 检查表结构以识别有效的列
-        const tableColumnsResult = await queryRunner.query(`
-          SELECT column_name 
-          FROM information_schema.columns 
-          WHERE table_name = '${userTableName}'
-        `);
-
-        // 将查询结果转换为所需类型
-        const tableColumns = tableColumnsResult as ColumnInfo[];
-
-        const availableColumns = tableColumns.map(
-          (col: ColumnInfo) => col.column_name,
-        );
-        logger.info(
-          `表 ${userTableName} 的可用列: ${availableColumns.join(', ')}`,
-        );
-
-        // 过滤用户对象，只保留与表列匹配的字段
-        const userColumns = Object.keys(user).filter((key) =>
-          availableColumns.includes(key.toLowerCase()),
-        );
-
-        if (userColumns.length === 0) {
-          logger.error(`❌ 用户对象中没有与表列匹配的字段`);
-          continue;
-        }
-
-        const columns = userColumns.join(', ');
-        const placeholders = userColumns
-          .map((_, idx) => `$${idx + 1}`)
-          .join(', ');
-
-        // 收集参数值
-        const paramValues = userColumns.map((key) => {
-          const value = user[key];
-          if (key === 'roles' && Array.isArray(value)) {
-            return JSON.stringify(value);
-          }
-          return value;
-        });
-
-        // 插入用户
-        await queryRunner.query(
-          `INSERT INTO "${userTableName}" (${columns}) VALUES (${placeholders})`,
-          paramValues,
-        );
-      }
-
-      await queryRunner.commitTransaction();
-      logger.info(`✅ 成功插入 ${usersToCreate.length} 个用户`);
-    } catch (error: unknown) {
-      await queryRunner.rollbackTransaction();
-      const errorMessage = error instanceof Error ? error.message : '未知错误';
-      logger.error(`❌ 插入用户失败: ${errorMessage}`);
-      throw error;
-    } finally {
-      await queryRunner.release();
-    }
-  }
-
-  // 获取总数以确认
-  const totalCount = (await dataSource.query(
-    `SELECT COUNT(*) FROM "${userTableName}"`,
-  )) as { count: string }[];
-  logger.info(`✅ 数据库中的总用户数: ${totalCount[0].count}`);
-}
-
-// 自执行异步函数
+// 运行脚本
 (async () => {
   try {
-    const success = await listTablesAndCreateUsers();
-
-    // 使用适当的代码退出
+    const success = await createBulkUsers();
     process.exit(success ? 0 : 1);
   } catch (error) {
     logger.error('意外错误:', error);
