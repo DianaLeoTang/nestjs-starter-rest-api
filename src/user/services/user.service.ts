@@ -140,4 +140,11 @@ export class UserService {
       excludeExtraneousValues: true,
     });
   }
+  // 删除用户，只有管理员有权限
+  async deleteUser(ctx: RequestContext, id: number): Promise<void> {
+    this.logger.log(ctx, `${this.deleteUser.name} was called`);
+
+    this.logger.log(ctx, `calling ${UserRepository.name}.delete`);
+    await this.repository.delete(id);
+  }
 }

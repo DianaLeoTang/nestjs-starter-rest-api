@@ -2,6 +2,7 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Param,
@@ -33,7 +34,6 @@ import { RequestContext } from '../../shared/request-context/request-context.dto
 import { UserOutput } from '../dtos/user-output.dto';
 import { UpdateUserInput } from '../dtos/user-update-input.dto';
 import { UserService } from '../services/user.service';
-
 @ApiTags('users')
 @Controller('users')
 export class UserController {
@@ -63,7 +63,7 @@ export class UserController {
     @ReqContext() ctx: RequestContext,
   ): Promise<BaseApiResponse<UserOutput>> {
     this.logger.log(ctx, `${this.getMyProfile.name} was called`);
-
+    // 获取单个用户
     const user = await this.userService.findById(ctx, ctx.user!.id);
     return { data: user, meta: {} };
   }
@@ -148,5 +148,17 @@ export class UserController {
 
     const user = await this.userService.updateUser(ctx, userId, input);
     return { data: user, meta: {} };
+  }
+
+  // 获取用户列表（支持分页、搜索）
+
+  // 新增用户
+
+  // 更新用户
+
+  // 删除用户
+  @Delete(':id')
+  async remove(@ReqContext() ctx: RequestContext, @Param('id') id: number) {
+    return this.userService.deleteUser(ctx, id);
   }
 }
